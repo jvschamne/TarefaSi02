@@ -1,0 +1,5 @@
+maxLin=20
+maxCol=20
+Tl=600
+Ts=400
+Ks=42
