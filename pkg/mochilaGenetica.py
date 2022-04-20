@@ -1,15 +1,14 @@
 from random import randint, choice, random
 
 class MochilaGenetica:
-    def __init__(self, infoVitimas, capacidade):
-        self.infoVitimas = infoVitimas
+    def __init__(self, capacidade, infoVitimas):
         self.capacidade = capacidade
+        self.infoVitimas = infoVitimas
 
     def genetico(self):
-
         quantItens = len(self.infoVitimas)
-        tamPopulacao = 10
-        #target = [1, 1, 0, 0]
+    
+        tamPopulacao = 20
 
         populacao = self.criaPopulacao(tamPopulacao, quantItens)
         
@@ -18,11 +17,10 @@ class MochilaGenetica:
             print(p)
 
         geracao = 1 #geracao atual
-        encontrou = False
 
         historicoFitness = [] #lista que guarda o fitness de cada geracao
 
-        while not encontrou:
+        while True:
 
             print("GERACAO", geracao)
 
@@ -107,7 +105,8 @@ class MochilaGenetica:
         pesoTotal = 0
         valorTotal = 0
         for indice, valor in enumerate(individuo):
-            pesoTotal += (individuo[indice] * self.infoVitimas[indice]["peso"])
+            #print(indice)
+            pesoTotal += (individuo[indice] * self.infoVitimas[indice]["tempoAcesso"])
             valorTotal += (individuo[indice] * self.infoVitimas[indice]["gravidade"])
 
 
@@ -149,7 +148,8 @@ class MochilaGenetica:
             sinais = vit["sinaisVitais"][0]
             ultimoIndex = len(sinais)-1
             vit["gravidade"] = sinais[ultimoIndex] 
-            
+                
             difAcesso = vit["difAcesso"][0]
             ultimoIndex = len(difAcesso)-1
-            vit["peso"] = int(difAcesso[ultimoIndex])
+            vit["tempoAcesso"] = int(difAcesso[ultimoIndex])
+         

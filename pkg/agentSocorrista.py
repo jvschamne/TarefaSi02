@@ -96,7 +96,7 @@ class AgentSocorrista:
         ## Obtem o tempo que tem para executar
         self.tempoLivre = configDict["Ts"]
         self.tempoTotal = configDict["Ts"]
-        print("Tempo disponivel: ", self.tempoLivre)
+        print("Tempo total para o socorrista: ", self.tempoTotal)
 
         self.maxPacotes = configDict["Ks"]
         print("Max pacotes: ", self.maxPacotes)
@@ -138,8 +138,8 @@ class AgentSocorrista:
         ## Poderia ser outra condição, como atingiu o custo máximo de operação
         
 
-        self.tempoLivre -= self.prob.getActionCost(self.previousAction)
-        print("Tempo disponivel: ", self.tempoLivre)
+        #self.tempoLivre -= self.prob.getActionCost(self.previousAction)
+        #print("Tempo disponivel: ", self.tempoLivre)
 
         ## Verifica se tem vitima na posicao atual    
         victimId = self.victimPresenceSensor()
@@ -152,56 +152,33 @@ class AgentSocorrista:
             if vitima in self.plan.infoVitimas:
                 self.plan.infoVitimas.remove(vitima)
 
-
-        """ ## Define a proxima acao a ser executada
-        ## currentAction eh uma tupla na forma: <direcao>, <state>
         
-        #resultados = self.plan.chooseAction(self)
-        self.infoVitimas = self.infoVitimas[0:8] 
-        #calculando a gravida das vitimas e armazenando no infoVitimas
-        self.plan.calculaGravidadeVitimas(self.infoVitimas)
-         
-        capacidade = 10 ##capacidade sera trocada pelo tempo total posteriormente
-        quantVit = len(self.infoVitimas)
-
-        for i in range(0, quantVit):
-            print("Gravidade/Valor:{}, Peso/Custo:{}".format(self.infoVitimas[i]["gravidade"], self.infoVitimas[i]["peso"]))
-    
-        pesos = []
-        valores = []
-
-        for vit in self.infoVitimas:
-            pesos.append(vit["peso"])
-            valores.append(vit["gravidade"])
-
-        mochila = self.plan.mochilaTeste(self.infoVitimas, capacidade)
-        print("Capacidade",capacidade)
-        for v in mochila:
-            print("Vitimas salvas:id{}, peso:{}, gravidade{}".format(v["id"], v["peso"], v["gravidade"]))
+        #-----------chamando o algoritmo genetico--------------#
+        capacidade = self.tempoTotal #capacidade da mochila eh o tempo disponivel para salvar as vitimas
+        self.genetico = MochilaGenetica(capacidade, self.infoVitimas)
         
-
-    
-        
-        genetico = self.plan.genetico()
-        print(genetico)"""
-
-        #reduzindo o numero de vitimas
-        self.infoVitimas = self.infoVitimas[0:8] 
-
-        
-        #chamando o algoritmo genetico
-        capacidade = 22
-        self.genetico = MochilaGenetica(self.infoVitimas, capacidade)
-        self.genetico.calculaGravidadeVitimas(self.infoVitimas)
-        
-        mochila = self.genetico.genetico()
+      
+        self.genetico.calculaGravidadeVitimas(self.infoVitimas)  #calcula a gravidade das vitimas
+      
         print("\n---------------Capacidade:", capacidade)
         print("---------------Vitimas:----")
         for vit in self.infoVitimas:
-             print("> Gravidade/Valor:{}, Peso/Custo:{}".format(vit["gravidade"], vit["peso"]))
+             print("> Gravidade/Valor:{}, Peso/Custo:{}".format(vit["gravidade"], vit["tempoAcesso"]))
+
+        mochila = self.genetico.genetico()
+        print("\n---------------Capacidade:", capacidade)
+        print("---------------Vitimas:----")
+
+        tempoGasto = 0
+        for vit, selected in zip(self.infoVitimas, mochila):
+            if selected == 1:
+                print("> Gravidade(Valor):{}, Tempo Acesso(Peso):{}".format(vit["gravidade"], vit["tempoAcesso"]))
+                tempoGasto += vit["tempoAcesso"]
         
         print("Solução:", mochila)
-
+        print("Tempo gasto pra pegar essas vitimas:", tempoGasto)
+        print("Tempo restante:", self.tempoTotal - tempoGasto)
+        
         sleep(3000)
         #result = self.plan.chooseAction(self)
         
