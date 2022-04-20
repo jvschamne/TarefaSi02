@@ -14,7 +14,7 @@ from time import sleep
 
 ## Importa o algoritmo para o plano
 from socorrePlan import SocorrePlan
-from mochilaGenetica import MochilaGenetica
+from mochilaAG import MochilaAG
 
 ##Importa o Planner
 sys.path.append('pkg\planner')
@@ -155,10 +155,10 @@ class AgentSocorrista:
         
         #-----------chamando o algoritmo genetico--------------#
         capacidade = self.tempoTotal #capacidade da mochila eh o tempo disponivel para salvar as vitimas
-        self.genetico = MochilaGenetica(capacidade, self.infoVitimas)
+        self.genetico = MochilaAG(capacidade, self.infoVitimas)
         
       
-        self.genetico.calculaGravidadeVitimas(self.infoVitimas)  #calcula a gravidade das vitimas
+        self.genetico.calculaGravidade_e_tempoVitimas()  #calcula a gravidade das vitimas
       
         print("\n---------------Capacidade:", capacidade)
         print("---------------Vitimas:----")
@@ -170,19 +170,27 @@ class AgentSocorrista:
         print("---------------Vitimas:----")
 
         tempoGasto = 0
+        gravidadeTotal = 0
+        vitimasSalvas = []
         for vit, selected in zip(self.infoVitimas, mochila):
             if selected == 1:
                 print("> Gravidade(Valor):{}, Tempo Acesso(Peso):{}".format(vit["gravidade"], vit["tempoAcesso"]))
                 tempoGasto += vit["tempoAcesso"]
-        
+                gravidadeTotal += vit["gravidade"]
+                vitimasSalvas.append(vit)
+                self.plan.vitimasSalvas += 1
+
         print("Solução:", mochila)
+        print("Gravidade Total:", gravidadeTotal)
         print("Tempo gasto pra pegar essas vitimas:", tempoGasto)
         print("Tempo restante:", self.tempoTotal - tempoGasto)
+        print("Vitimas salvas:")
+        for v in vitimasSalvas:
+            print(v)
         
-        sleep(3000)
         #result = self.plan.chooseAction(self)
         
-        result = resultados
+        """result = resultados
         #self.mapa = resultados[1]
     
 
@@ -195,9 +203,9 @@ class AgentSocorrista:
         ## Executa esse acao, atraves do metodo executeGo 
         self.executeGo(result[0])
         self.previousAction = result[0]
-        self.expectedState = result[1]       
+        self.expectedState = result[1]  """     
 
-        return 1
+        return -1
 
 
     ## Metodo que executa as acoes

@@ -62,8 +62,6 @@ def main():
     agent.deliberate()
     while agent.deliberate() != -1:
         model.draw()
-        #time.sleep(0.01) # para dar tempo de visualizar as movimentacoes do agente no labirinto
-    
 
     endVasculhador = time.time()
     tempoVasculhador = endVasculhador - startVasculhador
@@ -90,7 +88,6 @@ def main():
     agentSocorrista.deliberate()
     while agentSocorrista.deliberate() != -1:
         model.draw()
-        #time.sleep(0.01) # para dar tempo de visualizar as movimentacoes do agente no labirinto
 
     endSocorrista = time.time()
     tempoSocorrista = endSocorrista - startSocorrista
